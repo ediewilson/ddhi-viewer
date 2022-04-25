@@ -1,0 +1,78 @@
+/**
+ * @file
+ * Colour System Configuration. A standardized approach to defining and modulating colour.
+ * 
+ * Copy this file to your theme configuration folder of your local theme or component and adjust it _index file to import.
+ */
+ 
+ /* !COLOUR GRID
+    Define your design’s palette by choosing the main colours */
+
+$clr1: #00693e // Dartmouth Green
+$clr2: #9bc8eb // Dartmouth River Blue
+$clr3: #003c73 // Dartmouth Navy Blue
+$clr4: #9d162e // Dartmouth Bonfire Red
+$clr5: #ffa00f // Dartmouth Bonfire Orange
+
+
+// Define alternative blackpoint, whitepoint and neutrals.
+
+$black: #232526 // DDHI Black
+$white: #FFFFFF
+$true_black: #000000
+
+
+// Color map examples
+
+$clr1_map: (dark: mix($black,$clr1,30%),  shade: mix($black,$clr1,20%), primary: $clr1, tint: mix($white,$clr1,20%), fade: mix($white,$clr1,70%), watermark: mix($white,$clr1,90%))
+$clr2_map: (dark: mix($black,$clr1,30%), shade: mix($black,$clr2,20%), primary: $clr2, tint: mix($white,$clr2,20%), fade: mix($white,$clr2,70%), watermark: mix($white,$clr2,90%))
+$clr3_map: (dark: mix($black,$clr1,30%), shade: mix($black,$clr3,20%), primary: $clr3, tint: mix($white,$clr3,20%), fade: mix($white,$clr3,70%), watermark: mix($white,$clr3,90%))
+$clr4_map: (dark: mix($black,$clr1,30%), shade: mix($black,$clr4,20%), primary: $clr4, tint: mix($white,$clr4,20%), fade: mix($white,$clr4,70%), watermark: mix($white,$clr4,90%))
+$clr5_map: (dark: mix($black,$clr1,30%), shade: mix($black,$clr5,20%), primary: $clr5, tint: mix($white,$clr5,20%), fade: mix($white,$clr5,70%), watermark: mix($white,$clr5,90%))
+
+
+// Neutrals
+// neutral() function mixes blackpoint and whitepoint.
+
+$lightest_neutral: neutral(5)
+$lighter_neutral: neutral(30)
+$light_neutral: neutral(40)
+$neutral: neutral()
+$mid_neutral: neutral(60)
+$dark_neutral: neutral(70)
+$darker_neutral: neutral(80)
+$darkest_neutral: neutral(90)
+
+// Background
+
+$bgcolor: $white
+$bgcolor2: neutral(5)
+$bgcolor3: neutral(5)
+$bgcolor4: neutral(5)
+$bgcolor5: neutral(5)
+$bgcolor6: neutral(5)
+
+
+
+// Aliases
+
+$impact: $clr4
+$cta: set-color(4,'dark')
+$de_emphasized: $light_neutral
+$de_activated: $lighter_neutral
+$link_colour: $black
+
+// !LOCAL
+
+// Gradients
+
+$dark_interior: darken(set-color(4,'dark'),20%)
+
+$ltr_dark_gradient: linear-gradient(270deg, rgba($black, 0.92) 36%, rgba($dark_interior,0.7) 100%)
+$rtl_dark_gradient: linear-gradient(90deg, rgba($black, 0.92) 36%, rgba($dark_interior,0.7) 100%)
+$home_rtl_dark_gradient: linear-gradient(90deg, rgba($dark_interior, 0.8) 36%, rgba($clr1,0.1) 100%)
+$mirror_gradient: linear-gradient(90deg, rgba($true_black,1) 0%, rgba($true_black,.5) 15%, rgba(159,159,159,0) 50%, rgba($true_black,.5) 85%, rgba($true_black,1) 100%)
+$mirror_gradient_green: linear-gradient(90deg, rgba($true_black,1) 0%, rgba($clr1,50%) 50%, rgba($true_black,1) 100%)
+
+
+

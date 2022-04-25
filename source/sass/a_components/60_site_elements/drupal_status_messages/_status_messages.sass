@@ -1,0 +1,58 @@
+/**
+ * @file
+ * Styles for system messages.
+ * Work in progress. Working from Classy theme message styles.
+ */
+
+.messages
+  border: none
+  border-radius: 0
+  padding: rv(-1)
+  box-shadow: none
+  background-image: none
+  margin-top: rv(0)
+  margin-bottom: rv(0)
+
+  &:before
+    margin-right: rv(-2)
+  
+
+  & + .messages 
+    margin-top: rv(0)
+  
+
+  .messages__item + .messages__item 
+    margin-top: rv(-1)
+  
+
+  &--status
+    background-color: #e0eedb
+    color: #5c604e
+    &:before
+      @include material-icons
+      content: "check_circle"
+      color: rgb(129, 205, 187)
+    
+  
+
+  &--warning
+    background-color: rgba(255, 241, 98, 0.39)
+    color: #66624c
+    &:before
+      @include material-icons
+      content: "warning"
+      color: #ff6481
+    
+  
+
+  &--error
+    background-color: lighten($impact,30%)
+    color: $impact
+    &:before
+      @include material-icons
+      content: "error"
+      color: $impact
+    
+  
+
+

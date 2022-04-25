@@ -1,0 +1,39 @@
+/* 
+   @file _grid.sass 
+   @category 10_layout
+   @component layout_foundation_basic
+   @description  Establishes responsiveness for top-level sections. Requires a set DOM structure. See usage.md for details.
+  
+  */
+
+body > *, .tier
+  margin-top: 0
+  margin-bottom: 0
+  width: 100%
+  
+// .region class indicates a content region. Content regions enforce $max-width, with a minimum mobile padding
+// of $mobile_edge_padding_factor and a desktop width of $edge_padding_factor.
+// See usage.md in this component for details.
+  
+body > *.region, *.auto-columns > *
+  width: 100%
+  +responsive-inset() // Also consider standard-edge-padding() for top-level tiers
+  
+  > *
+    max-width: 100%
+          
+  +bp($stack_breakpoint)
+    display: grid
+    grid-template-columns: [left] $left_sidebar_width [main] 1fr [right] $right_sidebar_width
+    grid-column-gap: rv($grid_gap_factor)
+    grid-row-gap: rv($grid_gap_factor)
+      
+    > div, > main, > article
+      grid-column-start: main
+      grid-column-end: right
+      
+    > div:first-child, > main:first-child, > article:first-child
+      grid-column-start: left
+      
+    > div:last-child, > main:last-child, > article:last-child
+      grid-column-end: end

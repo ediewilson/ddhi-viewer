@@ -1,0 +1,20 @@
+/**
+ *  @file _inline_text_link.sass 
+ *  @category 30_typography
+ *  @component 00_Core
+ *  @description  Anchor tags tend to come in two varieties, one that's used for menus and one 
+ *  that's used for inline text. Inline text tends to occur within paragraphs, following a 
+ *  p > a selector logic (or main p > a). There are circumstances, however, that require anchor 
+ *  consistency with inline body text links. This mixin allows you to apply this logic wherever 
+ * relevant. It's important to override this mixin locally if you want to maintain consistency. */
+ 
+=inline-text-link()
+  color: $link_colour
+  cursor: pointer
+  text-decoration: none
+  +transition(all,-5)
+  +link-underline()
+  
+  &:hover, &:active
+    border-bottom-color: $black
+  

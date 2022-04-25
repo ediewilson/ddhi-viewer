@@ -1,0 +1,20 @@
+/*
+ * @file _ui_patterns
+ * @component ui_element_base
+ * A place for helpful UI-oriented mixins.
+ */    
+ 
+
+
+// See usage in form element base.
+ 
+$ui_form_mobile_clearance: rv($mobile_edge_padding_factor)
+$ui_form_clearance: rv($edge_padding_factor)
+
+=ui-element-width-control()
+  max-width: calc(100vw - #{$ui_form_mobile_clearance} * 2) // Form elements can only be as wide as the viewport less the edge padding.
+  
+  +bp($stack)
+    max-width: calc(100vw - #{$ui_form_clearance} * 2)    
+
+      

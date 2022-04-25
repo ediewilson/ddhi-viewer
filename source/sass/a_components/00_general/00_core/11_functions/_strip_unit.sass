@@ -1,0 +1,8 @@
+/* Strips units from a value. h/t to https://css-tricks.com/snippets/sass/strip-unit-function/ */
+  
+@use 'sass:math'
+
+@function strip-unit($number)
+  @if type-of($number) == 'number' and not unitless($number)
+    @return math.div($number,($number * 0 + 1))
+  @return $number

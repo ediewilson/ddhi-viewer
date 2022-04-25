@@ -1,0 +1,61 @@
+/** 
+ *  @file _table_collection.sass 
+ *  @category Base table styles
+ *  @component standardized_tables
+ *  @description Basic styling for customized tables */
+
+
+table
+  width: 100%
+  border-collapse: collapse
+    
+thead
+  border: 0
+  background-color: $row_header_bg
+    
+  tr
+    border: 0
+    
+tbody
+  border-width: 0px
+
+  tr
+    background-color: $row_bg_color
+    
+    &:first-child
+      border-top: $table_border_width solid $row_border_color
+
+  
+    &:hover
+      background-color: $row_zebra_stripe_color
+    
+      td, td a
+        color: inherit
+                
+      a
+        text-decoration: underline
+tr
+  border-bottom: $table_border_width solid $row_border_color
+        
+th, td
+  vertical-align: top
+  margin: 0
+  padding: rv(-2)
+  +font-size(-1)
+  background-color: transparent
+  +bp(lrg)
+    min-width: 125px // Evens out column spacing on generic tables. Needs testing.
+    
+  p, div
+    font-size: inherit
+
+td
+  color: $row_text_color
+
+th
+  color: $row_header_color
+  margin: 0
+  text-align: left
+  text-transform: uppercase
+  font-weight: $boldfw
+  border-bottom: 0

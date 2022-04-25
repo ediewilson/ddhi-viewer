@@ -1,0 +1,79 @@
+/*
+ * Defines form elements.
+ */    
+
+.btn-submit:active, .btn-submit:focus, .btn-submit:hover, button:active[type=submit], button:focus[type=submit], button:hover[type=submit], input:active[type=submit], input:focus[type=submit], input:hover[type=submit]
+  border: 0
+  background-color: $clr1
+
+input.form-text, input.form-tel, input.form-email, input.form-url, input.form-search, input.form-file, input.form-number, input.form-color
+  border: 0
+  border-bottom: 1px solid neutral(100)
+  width: 100%
+  padding: 0
+  
+  &:hover
+    box-shadow: none
+    border-color: $clr1
+    
+  &:focus
+    box-shadow: none
+    background:neutral(55)
+    border-bottom: 2px solid $clr1
+      
+input[type=checkbox]:checked
+  background-color: $clr2!important
+    
+#edit-actions--3
+  padding-top: 0
+  
+#block-webform
+  form
+    max-width: unset
+        
+        
+.webform-submission-form
+  display: flex
+  flex-wrap: wrap
+
+  > .form-wrapper.container
+    width: 100%
+    
+    +bp($tablet)
+      width: 50%
+            
+  .form-item-message
+    width: 100%
+    
+    +bp($tablet)
+      width: 50%
+      
+    > div 
+      height: 100%
+      
+      textarea
+        height: 100%
+        width: 100%
+        border-color: neutral(100)
+        
+        &:active, &:focus, &:hover
+          outline: 0
+          box-shadow: none
+          border-color: $clr1
+
+
+        &:focus
+          border-width: 2px
+                  
+  .form-actions
+    margin-top: rv(1)
+          
+.btn-submit, button[type=submit], input[type=submit]
+    background-color: $clr6
+    border: 0
+    border-radius: $btn_border_radius
+    width: auto
+    margin-bottom: rv(2)
+    +bp($tablet)
+        margin-bottom: 0
+    

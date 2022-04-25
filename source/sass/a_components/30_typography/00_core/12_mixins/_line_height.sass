@@ -1,0 +1,23 @@
+// Revised line-height mechanism. Line-heights are already proportional to the text size. 
+// @todo: Must investigate further the relationship between rv(0) and line-height: 1 so that we can
+// match rv() values to exact line-heights for measuring.
+ 
+// +line-height() returns a relative value of the provided factor against the standard $scale.
+
+=line-height($value: 1)
+  line-height: $value
+  
+// +set-line-height() returns a relative value and lets you provide a $scale
+  
+=set-line-height($value: 0,$ratio: $scale)
+  +line-height($value,$ratio)
+  
+// The standard line height is set in the $line_heights sass-map, returning the 'base' key value by default.
+  
+=standard-line-height($key: 'base')
+  line-height: map-get($line_heights,$key)
+
+// Single-line height is a fixed value of 1
+  
+=single-line-height()
+  +line-height()

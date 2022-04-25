@@ -1,0 +1,38 @@
+/* 
+   @file _grid.sass 
+   @category 10_layout
+   @component layout_foundation_basic
+   @description  Establishes responsiveness for top-level sections. Requires a set DOM structure. 
+    This is now deprecated. The intention behind this pattern was to make top level body elements (usually
+    <section> elements) implement a three-column grid by default, allowing producers to indicate elements
+    that should have a different treatment (e.g. a .full screen presentation. Browsers were not interpreting multiple 
+    “:not” selectors correctly, causing unexpected effects. Revisit in the future, but for now top-level regions
+    must have a .region class (see _grid.sass in this component) to work.
+  */
+
+body > *, .tier
+  margin-top: 0
+  margin-bottom: 0
+  width: 100%
+  
+body > *:not(.full, .fixed, .toolbar) > *, .tier > *:not(.full, .fixed, .toolbar) > *
+  +responsive-inset() // Also consider standard-edge-padding() for top-level tiers
+        
+body > *:not(.full, .fixed, .toolbar) > *, .tier:not(.full, .fixed, .toolbar ) > *
+  width: 100%
+  
+  +bp($stack_breakpoint)
+    display: grid
+    grid-template-columns: [left] $left_sidebar_width [main] 1fr [right] $right_sidebar_width
+    grid-column-gap: rv($grid_gap_factor)
+    grid-row-gap: rv($grid_gap_factor)
+      
+    > div, > main, > article
+      grid-column-start: main
+      grid-column-end: right
+      
+    > div:first-child, > main:first-child, > article:first-child
+      grid-column-start: left
+      
+    > div:last-child, > main:last-child, > article:last-child
+      grid-column-end: end

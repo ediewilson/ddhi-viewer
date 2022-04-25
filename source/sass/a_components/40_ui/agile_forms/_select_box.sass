@@ -1,0 +1,53 @@
+/*
+ * Defines input select box on form elements.
+ */  
+
+.webform-elements
+    .js-form-type-select
+        position: relative
+        select
+            display: none
+/* Style the arrow inside the select element: */
+.select-selected:after 
+  position: absolute
+  content: ""
+  top: 14px
+  right: 10px
+  width: 0
+  height: 0
+  border: 8px solid transparent
+  border-color: neutral(100) transparent transparent transparent
+
+
+/* Point the arrow upwards when the select box is open (active): */
+.select-selected.select-arrow-active:after 
+  border-color: transparent transparent  neutral() transparent
+  top: 7px
+
+
+/* style the items (options), including the selected item: */
+.select-items div,.select-selected 
+  padding: 8px 16px
+  border: 1px solid transparent
+  border-color: transparent transparent neutral(100) transparent
+  cursor: pointer
+
+
+/* Style items (options): */
+.select-items 
+  position: absolute
+  background-color: $white
+  top: 100%
+  left: 0
+  right: 0
+  z-index: 99
+
+
+/* Hide the items when the select box is closed: */
+.select-hide 
+  display: none
+
+
+.select-items div:hover, .same-as-selected 
+  background-color: rgba(0, 0, 0, 0.1)
+           

@@ -1,0 +1,30 @@
+/** 
+ *  @file _proportional_thumbnail.sass 
+ *  @category 10_layout
+ *  @component 00_core
+ *  @description Sets a thumbnail image to a proportion of its with. 
+ *
+ *  NOTE: The element must have an explicit $width set as per proportional_height()
+ */
+
+// Defaults to 4:3 ratio
+
+=proportional_thumbnail($width: 100%,$aspect_ratio: 0.75)
+  +proportional_height($width,$aspect_ratio)
+
+  img
+    object-fit: cover
+    width: 100%
+    height: 100%
+    
+
+// 16:9 video
+
+=proportional_height_widscreen($width:100%)
+  +proportional_height($width,0.5625)
+  
+  > *
+    object-fit: cover
+    width: 100%
+    height: 100%
+
