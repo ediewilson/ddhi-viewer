@@ -350,7 +350,7 @@ class DDHIDataComponent extends HTMLElement {
     var res = []
     if (activeId !== null) {
       const ids = activeId.split(",");
-      console.log('active id in get item data', ids)
+     // console.log('active id in get item data', ids)
       // TODO: Getting multi interview data
       await Promise.all(ids.map(async (id) => {
         component.tempResult = null;
@@ -385,8 +385,8 @@ class DDHIDataComponent extends HTMLElement {
     var res = []
     if (id !== null) {
       const ids = id.split(",");
-      console.log('active id in get associated entity data', ids)
-      console.log('entity list in associated entity before: ', this.multiInterview)
+      // console.log('active id in get associated entity data', ids)
+      // console.log('entity list in associated entity before: ', this.multiInterview)
 
       // TODO: Getting multi interview data
       await Promise.all(ids.map(async (id) => {
@@ -395,6 +395,10 @@ class DDHIDataComponent extends HTMLElement {
         //storeObject[property] = component.tempResult; // assign by reference
         // console.log('id', id, 'property', property, 'temp result', component.tempResult)
         if(!this.multiInterview.hasOwnProperty(id)) {
+          var color = Math.floor(Math.random()*16777215).toString(16);
+          color = '#' + color;
+          var border = this.shadeColor(color)
+          
           this.multiInterview[id] = {
             "dates": [],
             "events": [],
@@ -405,11 +409,15 @@ class DDHIDataComponent extends HTMLElement {
             "title": "",
             "transcript": "",
             "uri": "",
+            'color': "",
+            'border': ''
           } 
           
           for(const key in this.multiInterview[id]) {
             this.multiInterview[id][key] = component.tempResult[key]
           }
+          this.multiInterview[id].color = color;
+          this.multiInterview[id].border = border;
             //storeObject[property] = this.multiInterview
           
         }
@@ -422,7 +430,7 @@ class DDHIDataComponent extends HTMLElement {
         res.push(response)
       }));
     storeObject[property] = this.multiInterview
-    console.log('entity list in associated entity after: ', this.multiInterview)
+    // console.log('entity list in associated entity after: ', this.multiInterview)
     // // TODO: return all
     return res;
     }
@@ -458,7 +466,26 @@ class DDHIDataComponent extends HTMLElement {
     return item;
   }
 
+   shadeColor(color) {
+      var percent = -25;
+      var R = parseInt(color.substring(1,3),16);
+      var G = parseInt(color.substring(3,5),16);
+      var B = parseInt(color.substring(5,7),16);
 
+      R = parseInt(R * (100 + percent) / 100);
+      G = parseInt(G * (100 + percent) / 100);
+      B = parseInt(B * (100 + percent) / 100);
+
+      R = (R<255)?R:255;  
+      G = (G<255)?G:255;  
+      B = (B<255)?B:255;  
+
+      var RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
+      var GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
+      var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
+
+      return "#"+RR+GG+BB;
+  }
   // @method getActiveIdFromAttribute()
   // @description Retrieves the current active ID from the componentÃs ddhi-active-id  attribute.
   // @return A single active ID. Null if no ID is present.
@@ -1329,7 +1356,8 @@ customElements.define('transcript-html', class extends DDHIInfoPanel {
     this.selectedEntity;
     this.selectedEntityElements = [];
     this.previousSelectedEntity = null; // Used to detect a change in selected entities.
-
+    this.multiInterview;
+    this.ids;
     // Attach a shadow root to <transcript-html>.
     const shadowRoot = this.attachShadow({mode: 'open'});
     shadowRoot.innerHTML = `
@@ -1461,8 +1489,42 @@ customElements.define('transcript-html', class extends DDHIInfoPanel {
           background-color: rgba(24,98,24,0.6);
         }
 
+        .transcript-menu {
+          overflow: hidden;
+          border: 1px solid #ccc;
+          background-color: #f1f1f1;
+          height: max-content;
+        }
+
+        .disabled { 
+          display: none;
+        }
+        
+        /* Style the buttons inside the tab */
+        .transcript-menu button {
+          background-color: inherit;
+          float: left;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 7px 8px;
+          transition: 0.3s;
+          font-size: 12px;
+        }
+        
+        /* Change background color of buttons on hover */
+        .transcript-menu button:hover {
+          background-color: #ddd;
+        }
+        
+        /* Create an active/current tablink class */
+        .transcript-menu button.active {
+          background-color: #ccc;
+        }
+
 
       </style>
+      <div class='transcript-menu disabled'></div>
       <div class='controls'>
         <a class='previous disabled'>Previous Reference</a> <a class='next disabled'>Next Reference</a>
       </div>
@@ -1497,7 +1559,7 @@ customElements.define('transcript-html', class extends DDHIInfoPanel {
   // @return An array of monitored attributes.
 
   static get observedAttributes() {
-    return ['ddhi-active-id','selected-entity'];
+    return ['ddhi-active-id','selected-entity','viz-type'];
   }
 
   // @method attributeChangedCallback()
@@ -1507,7 +1569,14 @@ customElements.define('transcript-html', class extends DDHIInfoPanel {
   async attributeChangedCallback(attrName, oldVal, newVal) {
     if(attrName == 'ddhi-active-id') {
       await this.getItemDataById();
+      this.multiInterview;
+      await this.getAssociatedEntitiesByType(this,'multiInterview',this.getActiveIdFromAttribute());
+      this.ids = this.getActiveIdFromAttribute().split(',')
       this.render();
+      this.ids = this.getActiveIdFromAttribute().split(',')
+      if(this.getAttribute('viz-type') == 'multi') {
+        this.updateTabs()
+      }
     }
 
     if(attrName == 'selected-entity') {
@@ -1529,6 +1598,19 @@ customElements.define('transcript-html', class extends DDHIInfoPanel {
 
         this.shadowRoot.querySelector('.previous').classList.remove('disabled');
         this.shadowRoot.querySelector('.next').classList.remove('disabled');
+      }
+    }
+
+    if(attrName == 'viz-type') {
+      console.log('Viz type changed in transcript')
+    
+      console.log(this.ids, this.getActiveIdFromAttribute())
+      if(this.getAttribute('viz-type') == 'multi') {
+        this.updateTabs()
+        this.shadowRoot.querySelector('.transcript-menu').classList.remove('disabled');
+      }
+      if(this.getAttribute('viz-type') == 'single') {
+        this.shadowRoot.querySelector('.transcript-menu').classList.add('disabled');
       }
     }
 
@@ -1602,6 +1684,36 @@ customElements.define('transcript-html', class extends DDHIInfoPanel {
 
   }
 
+  removeAllChildNodes(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
+
+  updateTabs() {
+    var modal = this.shadowRoot.querySelector(".transcript-menu")
+    
+    modal.addEventListener('click', (event) => {
+      const isButton = event.target.nodeName === 'BUTTON';
+      if (!isButton) {
+        return;
+      }
+      this.renderMulti(event.target.value)
+    })
+    
+    this.removeAllChildNodes(modal);
+    for(var i=0; i<this.ids.length; i++) {
+      var button = document.createElement('button');
+      var id = this.ids[i]
+      button.value = id;
+      var narrator = this.multiInterview[id].title.split(' ')
+      narrator = narrator[narrator.length-1]
+      var t = document.createTextNode(narrator);
+      button.appendChild(t);
+      modal.appendChild(button)
+    }
+  }
+
   // @method render()
   // @description View display method for this component..
 
@@ -1611,6 +1723,15 @@ customElements.define('transcript-html', class extends DDHIInfoPanel {
     if (item.hasOwnProperty('transcript')) {
       this.renderValue(this.shadowRoot.querySelector('.info'),item.transcript);
     }
+  }
+
+  renderMulti(id) {
+      var item = this.multiInterview[id];
+  
+      if (item.hasOwnProperty('transcript')) {
+        this.renderValue(this.shadowRoot.querySelector('.info'),item.transcript);
+      }
+    
   }
 });
 
@@ -1754,6 +1875,7 @@ customElements.define('ddhi-viewer', class extends DDHIDataComponent {
     this.titleContainer;
     this.vizcontrols; // Selection mechanism for visualizations
     this.ivcontrols; // Selection mechanism for information view
+    this.vizMode = 'single';
 
     // Define the shadow root
     const shadowRoot = this.attachShadow({mode: 'open'});
@@ -1834,6 +1956,7 @@ customElements.define('ddhi-viewer', class extends DDHIDataComponent {
 
         section#menu {
           border-right: 1px solid var(--ddhi-viewer-border-color,#E9E9E9);
+          padding-left: 0 !important;
         }
 
 
@@ -2066,13 +2189,62 @@ customElements.define('ddhi-viewer', class extends DDHIDataComponent {
           opacity: 1;
         }
 
-
+        .switch-field {
+          display: flex;
+          margin-bottom: 12px;
+        }
+        
+        .switch-field input {
+          position: absolute !important;
+          clip: rect(0, 0, 0, 0);
+          height: 1px;
+          width: 1px;
+          border: 0;
+          overflow: hidden;
+        }
+        
+        .switch-field label {
+          background-color: #e4e4e4;
+          color: rgba(0, 0, 0, 0.6);
+          font-size: 10px;
+          line-height: 1;
+          text-align: center;
+          padding: 4px 8px;
+          margin-right: -1px;
+          border: 1px solid rgba(0, 0, 0, 0.2);
+          box-shadow: inset 0 1px 3px rgb(0 0 0 / 30%), 0 1px rgb(255 255 255 / 10%);
+          transition: all 0.1s ease-in-out;
+      }
+        
+        .switch-field label:hover {
+          cursor: pointer;
+        }
+        
+        .switch-field input:checked + label {
+          background-color: #f8f8f8;
+          box-shadow: none;
+        }
+        
+        .switch-field label:first-of-type {
+          border-radius: 4px 0 0 4px;
+        }
+        
+        .switch-field label:last-of-type {
+          border-radius: 0 4px 4px 0;
+        }
+        
 
 
 
       </style>
       <div id='viewer'>
         <section id='menu' propagate>
+        <div class='switch-field'>
+        <input type="radio" id="single" name="viz_type" value="single" checked onclick="this.getRootNode().host.updateVizType('single')" >
+        <label for="single">Single</label>
+        <input type="radio" id="multi" name="viz_type" value="multi" onclick="this.getRootNode().host.updateVizType('multi')" >
+        <label for="multi">Multi</label>
+        </div>
           <header>Select an interview:</header>
           <ul id='interview-menu'></ul>
         </section>
@@ -2169,23 +2341,28 @@ customElements.define('ddhi-viewer', class extends DDHIDataComponent {
         var element = event.currentTarget;
         var transcriptID = element.getAttribute('data-id');
 
-        // menu.querySelectorAll('.active').forEach(function(e){
-        //   e.classList.remove('active');
-        // });
+        var radio = this.shadowRoot.querySelector('input[name="viz_type"]:checked')
+        if(radio.value == 'single') {
+          menu.querySelectorAll('.active').forEach(function(e){
+            e.classList.remove('active');
+          });
 
-        // element.classList.add('active');
-        // this.deactivateIds();
-        // this.activateId(transcriptID);
-
-        /*
-        Stashed logic for multiple active transcripts.
-*/
-        if (element.classList.contains('active')) {
-          this.deactivateIds(transcriptID);
-          element.classList.remove('active');
-        } else {
-          this.activateId(transcriptID);
           element.classList.add('active');
+          this.deactivateIds();
+          this.activateId(transcriptID);
+        }
+        /*
+         Logic for multiple active transcripts.
+        */      
+        else {
+          if (element.classList.contains('active')) {
+              
+            this.deactivateIds(transcriptID);
+            element.classList.remove('active');
+          } else {
+            this.activateId(transcriptID);
+            element.classList.add('active');
+          }
         }
       });
 
@@ -2227,6 +2404,17 @@ customElements.define('ddhi-viewer', class extends DDHIDataComponent {
       }
       this.propagateActiveIds();
     }
+  }
+
+  updateVizType(type) {
+    this.vizMode = type;
+    if(this.vizMode == 'single') {
+      var first = this.activeIds[0]
+      var active = this.shadowRoot.querySelector('a[data-id=\"'+first+'"]')
+      active.click();
+      this.activateId(first);
+    }
+    this.propagateAttributes('viz-type', type);
   }
 
   // @method observedAttributes()
@@ -2383,7 +2571,6 @@ customElements.define('ddhi-viewer', class extends DDHIDataComponent {
 
 
   propagateActiveIds() {
-    console.log('active ids', this.activeIds);
     this.propagateAttributes('ddhi-active-id',this.activeIds.join());
   }
 
@@ -2472,7 +2659,6 @@ customElements.define('ddhi-entity-map', class extends DDHIVisualization {
         }
 
         .leaflet-marker-icon {
-          border: 1px #c07400 solid;
           border-radius: 5px;
           margin-left: -7.5px !important;
           margin-top: -7.5px !important;
@@ -2593,12 +2779,12 @@ customElements.define('ddhi-entity-map', class extends DDHIVisualization {
 
     // show the scale bar on the lower left corner
     L.control.scale().addTo(component.map);
-    console.log('map multi interview', component.multiInterview)
     // TODO: Nest work
-    const colors = ['one', 'two', 'three']
+    
     this.ids.forEach(function(id,i) {
-      var markerIcon = L.divIcon({className: 'leaflet-marker-icon ' + colors[i]});
-      //console.log('multiinterview', this.multiInterview)
+      var markerIcon = L.divIcon({className: 'leaflet-marker-icon'});
+      var b = '1px ' + component.multiInterview[id].border + ' solid';
+      var clr = component.multiInterview[id].color;
       component.associatedPlaces = component.multiInterview[id].places 
       component.associatedPlaces.forEach(function(e,i){
         if (e.location) {
@@ -2611,6 +2797,8 @@ customElements.define('ddhi-entity-map', class extends DDHIVisualization {
               component.propagateAttributes('selected-entity',e.target.options.id);
             }
           });
+          marker.getElement().style.backgroundColor = clr;
+          marker.getElement().style.border = b;
         }
       });
     });
